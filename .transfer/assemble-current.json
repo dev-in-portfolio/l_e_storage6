@@ -1,0 +1,9 @@
+{
+  "path": "Academy5.pdf",
+  "size": 109091993,
+  "sha256": "171eab71a473d024baba387e28670690851a3ceacf44151c969adddd3625c2e6",
+  "chunks": [
+    ".chunks/Academy5.part001",
+    ".chunks/Academy5.part002"
+  ]
+}
