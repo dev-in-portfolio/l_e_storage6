@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   import:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     env:
       TRANSFER_BRANCH: ${{ github.event.pull_request.head.ref }}
@@ -28,8 +29,9 @@ jobs:
           git remote add origin "https://x-access-token:${TOKEN}@github.com/${REPO}.git"
           git fetch --depth=1 origin "${TRANSFER_BRANCH}"
           git checkout -B "${TRANSFER_BRANCH}" FETCH_HEAD
-          manifest="$(find .transfer -maxdepth 1 -type f -name 'drive-*.json' -print -quit)"
-          [ -n "$manifest" ] || { echo "No Drive transfer manifest found"; exit 0; }
+          mapfile -t manifests < <(find .transfer -maxdepth 1 -type f -name 'drive-*.json' -print)
+          [ "${#manifests[@]}" -eq 1 ] || { echo "Expected exactly one Drive transfer manifest; found ${#manifests[@]}"; exit 1; }
+          manifest="${manifests[0]}"
           python3 - "$manifest" <<'PY'
           import hashlib, json, pathlib, subprocess, sys
           mpath = pathlib.Path(sys.argv[1])
